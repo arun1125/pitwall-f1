@@ -57,6 +57,14 @@
 </div>
 
 <div id="chart-container" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-    <p class="text-gray-400 text-sm text-center py-12">Chart will appear here once you select a comparison.</p>
+    <div id="chart-placeholder" class="text-gray-400 text-sm text-center py-12">
+        Select a race and two drivers to compare lap times.
+    </div>
+    <canvas id="lap-chart" class="hidden w-full" height="400"></canvas>
 </div>
+
+<div id="stats-container" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-4">
+</div>
+
+<script src="/static/chart.js"></script>
 {% endblock %}

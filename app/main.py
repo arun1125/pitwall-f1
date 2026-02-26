@@ -4,12 +4,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
-from app.routers import sessions, partials
+from app.routers import sessions, partials, laps
 from app.db import get_db
 
 app = FastAPI(title="Pitwall")
 app.include_router(sessions.router)
 app.include_router(partials.router)
+app.include_router(laps.router)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
