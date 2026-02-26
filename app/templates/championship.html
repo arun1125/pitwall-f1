@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Pitwall — Championship{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <h2 class="text-lg font-semibold">Championship Standings</h2>
+        <div class="flex items-center gap-3">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1 sm:hidden">Year</label>
+                <select id="champ-year-select"
+                    class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-f1red">
+                    {% for y in years %}
+                    <option value="{{ y }}" {% if loop.first %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex rounded-md border border-gray-300 overflow-hidden">
+                <button id="btn-drivers" class="px-3 py-2 text-sm font-medium bg-f1red text-white">Drivers</button>
+                <button id="btn-constructors" class="px-3 py-2 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50">Constructors</button>
+            </div>
+        </div>
+    </div>
+    <div class="relative w-full" style="min-height: 400px;">
+        <canvas id="champ-chart" class="w-full"></canvas>
+    </div>
+</div>
+
+<script src="/static/championship.js"></script>
+{% endblock %}

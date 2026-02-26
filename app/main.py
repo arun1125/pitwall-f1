@@ -24,4 +24,13 @@ async def index(request: Request):
     rows = conn.execute("SELECT DISTINCT year FROM events ORDER BY year DESC").fetchall()
     conn.close()
     years = [row["year"] for row in rows]
-    return templates.TemplateResponse("index.html", {"request": request, "years": years})
+    return templates.TemplateResponse("index.html", {"request": request, "years": years, "nav_active": "laps"})
+
+
+@app.get("/championship", response_class=HTMLResponse)
+async def championship(request: Request):
+    conn = get_db()
+    rows = conn.execute("SELECT DISTINCT year FROM events ORDER BY year DESC").fetchall()
+    conn.close()
+    years = [row["year"] for row in rows]
+    return templates.TemplateResponse("championship.html", {"request": request, "years": years, "nav_active": "championship"})

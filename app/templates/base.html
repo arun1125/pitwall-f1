@@ -26,10 +26,26 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 <body class="bg-[#FAFAFA] font-sans text-gray-900 min-h-screen">
-    <header class="bg-white border-b border-gray-200 px-6 py-4">
-        <h1 class="text-xl font-bold tracking-tight">
-            <span class="text-f1red">Pit</span>wall
-        </h1>
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between py-4">
+                <h1 class="text-xl font-bold tracking-tight">
+                    <span class="text-f1red">Pit</span>wall
+                </h1>
+                <nav class="flex gap-1 sm:gap-2">
+                    <a href="/"
+                       class="px-3 py-2 text-sm font-medium rounded-md transition-colors
+                              {% if nav_active == 'laps' %}text-f1red border-b-2 border-f1red{% else %}text-gray-500 hover:text-gray-900{% endif %}">
+                        Lap Comparison
+                    </a>
+                    <a href="/championship"
+                       class="px-3 py-2 text-sm font-medium rounded-md transition-colors
+                              {% if nav_active == 'championship' %}text-f1red border-b-2 border-f1red{% else %}text-gray-500 hover:text-gray-900{% endif %}">
+                        Championship
+                    </a>
+                </nav>
+            </div>
+        </div>
     </header>
     <main class="max-w-5xl mx-auto px-4 py-8">
         {% block content %}{% endblock %}
