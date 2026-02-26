@@ -1,0 +1,18 @@
+
+#10 - Add navigation bar with page tabs
+- Added nav bar to base.html with "Lap Comparison" and "Championship" tabs
+- Active tab highlighted with F1 red underline via nav_active template variable
+- Added /championship route to main.py serving championship.html placeholder with year dropdown
+- Mobile-friendly layout, nav appears on all pages
+- All 22 existing tests pass
+
+#11 - Championship Drivers API + standings chart
+- Added /api/championship/drivers?year=YYYY endpoint (app/routers/championship.py)
+- Joins championship_progression with events for race names
+- Returns drivers sorted by final_position with per-round data (round_points, cumulative_points, race_name)
+- Top 5 drivers rendered with bold lines, rest at 30% opacity
+- Chart.js line chart with team colors, clickable legend, tooltips showing "R5 — Monaco GP: +25pts (Total: 110pts)"
+- Year dropdown auto-loads most recent season on page load
+- Created static/championship.js for chart rendering
+- 8 new pytest tests covering data structure, sorting, VER P1, race names, cumulative points, team colors, edge cases
+- All 30 tests pass
