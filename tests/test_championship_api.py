@@ -75,3 +75,67 @@ def test_championship_invalid_year():
 def test_championship_missing_year():
     r = client.get("/api/championship/drivers")
     assert r.status_code == 422
+
+
+# --- Constructor endpoint tests ---
+
+
+def test_constructors_2024_returns_teams():
+    r = client.get("/api/championship/constructors", params={"year": 2024})
+    assert r.status_code == 200
+    data = r.json()
+    constructors = data["constructors"]
+    assert len(constructors) > 0
+    first = constructors[0]
+    assert "team" in first
+    assert "team_color" in first
+    assert "rounds" in first
+    assert len(first["rounds"]) > 0
+
+
+def test_constructors_points_are_sum_of_drivers():
+    """Constructor round_points should equal the sum of their drivers' round_points."""
+    year = 2024
+    dr = client.get("/api/championship/drivers", params={"year": year}).json()
+    cr = client.get("/api/championship/constructors", params={"year": year}).json()
+
+    # Build expected team points from driver data for round 1
+    team_points_r1 = {}
+    for d in dr["drivers"]:
+        team = d["team"]
+        r1 = next((r for r in d["rounds"] if r["round"] == 1), None)
+        if r1:
+            team_points_r1[team] = team_points_r1.get(team, 0) + r1["round_points"]
+
+    # Verify constructor data matches
+    for c in cr["constructors"]:
+        c_r1 = next((r for r in c["rounds"] if r["round"] == 1), None)
+        if c_r1 and c["team"] in team_points_r1:
+            assert c_r1["round_points"] == team_points_r1[c["team"]], (
+                f"{c['team']} round 1 points mismatch"
+            )
+
+
+def test_constructors_correct_team_count_2024():
+    r = client.get("/api/championship/constructors", params={"year": 2024})
+    constructors = r.json()["constructors"]
+    # F1 2024 had 10 teams
+    assert len(constructors) == 10
+
+
+def test_constructors_sorted_by_final_points():
+    r = client.get("/api/championship/constructors", params={"year": 2024})
+    constructors = r.json()["constructors"]
+    final_points = [c["rounds"][-1]["cumulative_points"] for c in constructors]
+    assert final_points == sorted(final_points, reverse=True)
+
+
+def test_constructors_invalid_year():
+    r = client.get("/api/championship/constructors", params={"year": 1950})
+    assert r.status_code == 200
+    assert r.json() == {"constructors": []}
+
+
+def test_constructors_missing_year():
+    r = client.get("/api/championship/constructors")
+    assert r.status_code == 422

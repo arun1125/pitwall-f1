@@ -9,22 +9,47 @@ function hexToRgba(hex, alpha) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+function setActiveToggle(mode) {
+    currentMode = mode;
+    const btnDrivers = document.getElementById('btn-drivers');
+    const btnConstructors = document.getElementById('btn-constructors');
+
+    if (mode === 'drivers') {
+        btnDrivers.classList.add('bg-f1red', 'text-white');
+        btnDrivers.classList.remove('bg-white', 'text-gray-700', 'hover:bg-gray-50');
+        btnConstructors.classList.remove('bg-f1red', 'text-white');
+        btnConstructors.classList.add('bg-white', 'text-gray-700', 'hover:bg-gray-50');
+    } else {
+        btnConstructors.classList.add('bg-f1red', 'text-white');
+        btnConstructors.classList.remove('bg-white', 'text-gray-700', 'hover:bg-gray-50');
+        btnDrivers.classList.remove('bg-f1red', 'text-white');
+        btnDrivers.classList.add('bg-white', 'text-gray-700', 'hover:bg-gray-50');
+    }
+}
+
 function loadChampionship() {
     const year = document.getElementById('champ-year-select').value;
     if (!year) return;
 
-    fetch(`/api/championship/drivers?year=${year}`)
+    const endpoint = currentMode === 'drivers'
+        ? `/api/championship/drivers?year=${year}`
+        : `/api/championship/constructors?year=${year}`;
+
+    fetch(endpoint)
         .then(r => r.json())
-        .then(data => renderChampChart(data.drivers))
+        .then(data => {
+            if (currentMode === 'drivers') {
+                renderDriverChart(data.drivers);
+            } else {
+                renderConstructorChart(data.constructors);
+            }
+        })
         .catch(err => console.error('Failed to load championship:', err));
 }
 
-function renderChampChart(drivers) {
+function renderDriverChart(drivers) {
     if (!drivers || drivers.length === 0) return;
 
-    const canvas = document.getElementById('champ-chart');
-
-    // Build round labels from first driver's data
     const roundLabels = drivers[0].rounds.map(r => `R${r.round}`);
 
     const datasets = drivers.map(driver => {
@@ -42,17 +67,48 @@ function renderChampChart(drivers) {
             pointHoverRadius: 5,
             pointHoverBackgroundColor: color,
             tension: 0.2,
-            // Store metadata for tooltips
             _rounds: driver.rounds,
             _code: driver.code,
         };
     });
 
+    renderChart(roundLabels, datasets);
+}
+
+function renderConstructorChart(constructors) {
+    if (!constructors || constructors.length === 0) return;
+
+    const roundLabels = constructors[0].rounds.map(r => `R${r.round}`);
+
+    const datasets = constructors.map(team => {
+        const color = team.team_color;
+
+        return {
+            label: team.team,
+            data: team.rounds.map(r => r.cumulative_points),
+            borderColor: hexToRgba(color, 1),
+            backgroundColor: hexToRgba(color, 1),
+            borderWidth: 2.5,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: color,
+            tension: 0.2,
+            _rounds: team.rounds,
+            _code: team.team,
+        };
+    });
+
+    renderChart(roundLabels, datasets);
+}
+
+function renderChart(labels, datasets) {
+    const canvas = document.getElementById('champ-chart');
+
     if (champChart) champChart.destroy();
 
     champChart = new Chart(canvas, {
         type: 'line',
-        data: { labels: roundLabels, datasets },
+        data: { labels, datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -103,6 +159,17 @@ function renderChampChart(drivers) {
         },
     });
 }
+
+// Toggle buttons
+document.getElementById('btn-drivers').addEventListener('click', () => {
+    setActiveToggle('drivers');
+    loadChampionship();
+});
+
+document.getElementById('btn-constructors').addEventListener('click', () => {
+    setActiveToggle('constructors');
+    loadChampionship();
+});
 
 // Year change
 document.getElementById('champ-year-select').addEventListener('change', loadChampionship);

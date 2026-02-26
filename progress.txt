@@ -16,3 +16,15 @@
 - Created static/championship.js for chart rendering
 - 8 new pytest tests covering data structure, sorting, VER P1, race names, cumulative points, team colors, edge cases
 - All 30 tests pass
+
+#12 - Constructor standings toggle
+- Added /api/championship/constructors?year=YYYY endpoint (app/routers/championship.py)
+- Aggregates driver points by team per round using SQL GROUP BY with SUM
+- Returns constructors sorted by final cumulative points (descending)
+- Each constructor has team, team_color, and rounds array with round/race_name/round_points/cumulative_points
+- Updated static/championship.js with Driver/Constructor toggle button logic
+- Toggle switches active button styling (F1 red highlight) and fetches appropriate API
+- Constructor chart shows all teams at full opacity with team colors
+- Tooltips work in constructor view showing team name and points
+- 6 new pytest tests: team data structure, points = sum of drivers, 10 teams in 2024, sorted by points, invalid year, missing year
+- All 36 tests pass
