@@ -8,11 +8,26 @@ function tryLoadComparison() {
 
     if (!year || !round || !d1 || !d2 || d1 === d2) return;
 
+    // Show loading state
+    const placeholder = document.getElementById('chart-placeholder');
+    const loading = document.getElementById('chart-loading');
+    const canvas = document.getElementById('lap-chart');
+    placeholder.classList.add('hidden');
+    loading.classList.remove('hidden');
+    canvas.classList.add('hidden');
+
     const url = `/api/laps/compare?year=${year}&round=${round}&d1=${d1}&d2=${d2}`;
     fetch(url)
         .then(r => r.json())
-        .then(data => renderChart(data))
-        .catch(err => console.error('Failed to load comparison:', err));
+        .then(data => {
+            loading.classList.add('hidden');
+            renderChart(data);
+        })
+        .catch(err => {
+            loading.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+            console.error('Failed to load comparison:', err);
+        });
 }
 
 // Compound colors
@@ -80,8 +95,6 @@ function renderChart(data) {
     const maxTime = Math.ceil(Math.max(...cleanTimes) + 2);
 
     const canvas = document.getElementById('lap-chart');
-    const placeholder = document.getElementById('chart-placeholder');
-    placeholder.classList.add('hidden');
     canvas.classList.remove('hidden');
 
     if (lapChart) lapChart.destroy();
@@ -182,7 +195,7 @@ function renderStats(d1, d2, color1, color2) {
     container.classList.remove('hidden');
     container.innerHTML = `
         <h3 class="text-sm font-semibold text-gray-700 mb-3">Summary</h3>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-2">
                 <div class="flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full inline-block" style="background:${color1}"></span>
