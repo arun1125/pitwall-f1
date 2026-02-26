@@ -1,0 +1,4 @@
+<option value="">Select race</option>
+{% for e in events %}
+<option value="{{ e.round }}">R{{ e.round }} — {{ e.name }}</option>
+{% endfor %}

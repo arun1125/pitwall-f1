@@ -5,7 +5,55 @@
 {% block content %}
 <div id="controls" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
     <h2 class="text-lg font-semibold mb-4">Lap Time Comparison</h2>
-    <p class="text-gray-500 text-sm">Select a race and two drivers to compare lap times.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Year -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+            <select id="year-select" name="year"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-f1red"
+                hx-get="/partials/events"
+                hx-target="#event-select"
+                hx-trigger="change"
+                hx-swap="innerHTML">
+                <option value="">Select year</option>
+                {% for y in years %}
+                <option value="{{ y }}">{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- Race -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Race</label>
+            <select id="event-select" name="round"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-f1red"
+                hx-get="/partials/drivers"
+                hx-include="#year-select"
+                hx-target="#driver-selects"
+                hx-trigger="change"
+                hx-swap="innerHTML">
+                <option value="">Select race</option>
+            </select>
+        </div>
+        <!-- Driver selects container (replaced by HTMX) -->
+        <div id="driver-selects" class="contents">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Driver 1</label>
+                <select id="driver1-select" name="d1"
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-f1red"
+                    disabled>
+                    <option value="">Select driver</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Driver 2</label>
+                <select id="driver2-select" name="d2"
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-f1red"
+                    disabled>
+                    <option value="">Select driver</option>
+                </select>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="chart-container" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
