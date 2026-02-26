@@ -28,3 +28,14 @@
 - Tooltips work in constructor view showing team name and points
 - 6 new pytest tests: team data structure, points = sum of drivers, 10 teams in 2024, sorted by points, invalid year, missing year
 - All 36 tests pass
+
+#13 - Championship page Playwright E2E tests
+- Created tests/test_championship_e2e.py with 6 Playwright browser tests
+- Same server setup pattern as existing E2E tests (module-scoped fixture, separate port 8766)
+- Test: page loads with year dropdown, chart canvas, and toggle buttons visible
+- Test: chart auto-renders on page load with driver datasets
+- Test: changing year updates chart with different driver data
+- Test: constructor toggle switches view (fewer datasets than driver view)
+- Test: nav bar "Lap Comparison" link navigates from /championship to /
+- Test: nav bar "Championship" link navigates from / to /championship
+- All 42 tests pass (36 existing + 6 new)
